@@ -10,7 +10,7 @@ from discord.ext.commands import Bot
 DEBUG = False
 
 BOT_PREFIX = ("$")
-import config.py
+import config.py # either comment out this line and uncomment the next line, or make a config.py file that has your token stored in it, either or will work, this is just so i don't goof again and push the file with the token to github :^)
 #TOKEN = "BOT SECRET DO NOT PUT ON GITHUB"  # Get at discordapp.com/developers/applications/me
 
 client = Bot(command_prefix=BOT_PREFIX)
