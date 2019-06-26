@@ -1,6 +1,7 @@
 # Work with Python 3.6
 import os
 from discord.ext.commands import Bot
+import markov
 
 DEBUG = False
 
@@ -13,7 +14,7 @@ MESSAGES_DIRECTORY = "messages/"
 client = Bot(command_prefix=BOT_PREFIX)
 
 @client.command(pass_context=True, aliases=['archive'])
-async def log(ctx, limit: int =10000):
+async def babble(ctx, limit: int=10000):
     list_messages = []
     channel = ctx.message.channel 
     calleduser = ctx.message.author
@@ -35,6 +36,15 @@ async def log(ctx, limit: int =10000):
         for msg in list_messages:
             f.write(msg + '\n')
     print(channel.id)
+
+    with open(outfile, 'r') as words:
+        corpus = ''
+        words = words.readlines()
+        for x in words:
+            corpus += x
+        sentence = markov.gen_sentence(markov.create_markov_model(corpus))
+        await channel.send(sentence)
+        
 
 @client.command()
 async def test(ctx, arg):

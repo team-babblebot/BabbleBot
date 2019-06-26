@@ -1,1 +1,4 @@
 config.py
+**/bot-env
+**/__pycache__
+**/messages
