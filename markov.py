@@ -49,6 +49,8 @@ def gen_sentence(model, state_len: int =DEFAULT_STATE_LEN):
                 sentence.append(curr_word)
             else:
                 break
+        if sentence[-1] == END_TAG:
+            sentence = []
     if state_len > 1:
         sentence.pop(0)
     return " ".join(sentence)
