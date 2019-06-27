@@ -6,7 +6,7 @@ import markov
 DEBUG = False
 
 from config import TOKEN   # either comment out this line and uncomment the next line, or make a config.py file that has your token stored in it, either or will work, this is just so i don't goof again and push the file with the token to github :^)
-# TOKEN = "BOT SECRET DO NOT PUT ON GITHUB"  # Get at discordapp.com/developers/applications/me
+from config import BotPingCredits
 BOT_PREFIX = ("$")
 
 MESSAGES_DIRECTORY = "messages/"
@@ -14,11 +14,15 @@ MESSAGES_DIRECTORY = "messages/"
 client = Bot(command_prefix=BOT_PREFIX)
 
 @client.command(pass_context=True)
-async def babble(ctx, limit: int=10000):
+async def babble(ctx, arg = [], limit: int=10000):
     list_messages = []
     channel = ctx.message.channel 
-    calleduser = ctx.message.author
-
+    if arg == []:
+        calleduser = ctx.message.author
+        original = True
+    else:
+        calleduser = ctx.message.mentions[0] 
+        original = False
     
     outfile = f'{MESSAGES_DIRECTORY}{channel.id}/{calleduser.id}.out'
     if os.path.exists(outfile) == False:
@@ -46,7 +50,14 @@ async def babble(ctx, limit: int=10000):
         for x in words:
             corpus += x
         sentence = markov.gen_sentence(markov.create_markov_model(corpus))
-        await channel.send(sentence)
+        
+        if original:
+            await channel.send(sentence)
+        else:
+            if BotPingCredits:
+                await channel.send("\"" + sentence + "\" -<@!" + str(ctx.message.mentions[0].id) + ">")
+            else:
+                await channel.send("\"" + sentence + "\" -" + str(ctx.message.mentions[0].name))
 
 @client.command(pass_context=True, aliases=['archive'])
 async def relog(ctx, *limit:int):
@@ -69,10 +80,6 @@ async def relog(ctx, *limit:int):
             f.write(i + '\n')
     if DEBUG: print(channel.id)
     await channel.send("Relog complete!")
-
-@client.command()
-async def test(ctx, arg):
-    await ctx.send(arg)
 
 
 if __name__ == '__main__':
