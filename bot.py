@@ -5,15 +5,13 @@ import markov
 
 DEBUG = False
 
-from config import TOKEN   # either comment out this line and uncomment the next line, or make a config.py file that has your token stored in it, either or will work, this is just so i don't goof again and push the file with the token to github :^)
-# TOKEN = "BOT SECRET DO NOT PUT ON GITHUB"  # Get at discordapp.com/developers/applications/me
-BOT_PREFIX = ("$")
+from config import TOKEN, PREFIX as BOT_PREFIX
 
 MESSAGES_DIRECTORY = "messages/"
 
 client = Bot(command_prefix=BOT_PREFIX)
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases=['b'])
 async def babble(ctx, limit: int=10000):
     list_messages = []
     channel = ctx.message.channel 
@@ -46,6 +44,7 @@ async def babble(ctx, limit: int=10000):
         for x in words:
             corpus += x
         sentence = markov.gen_sentence(markov.create_markov_model(corpus))
+
         await channel.send(sentence)
 
 @client.command(pass_context=True, aliases=['archive'])
@@ -71,8 +70,12 @@ async def relog(ctx, *limit:int):
     await channel.send("Relog complete!")
 
 @client.command()
-async def test(ctx, arg):
-    await ctx.send(arg)
+async def test(ctx, arg=''):
+    if arg:
+        await ctx.send(arg)
+    else:
+        await ctx.send('no u')
+    await ctx.message.delete()
 
 
 if __name__ == '__main__':
