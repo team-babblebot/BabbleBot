@@ -1,0 +1,4 @@
+TOKEN = "BOT TOKEN GOES HERE"
+
+# If sentence creation is called on another user, should the bot credit the user with a ping
+BotPingCredits = False 

@@ -5,18 +5,22 @@ import markov
 
 DEBUG = False
 
-from config import TOKEN, PREFIX as BOT_PREFIX
+from config import TOKEN, PREFIX as BOT_PREFIX, BotPingCredits
 
 MESSAGES_DIRECTORY = "messages/"
 
 client = Bot(command_prefix=BOT_PREFIX)
 
 @client.command(pass_context=True, aliases=['b'])
-async def babble(ctx, limit: int=10000):
+async def babble(ctx, arg = [], limit: int=10000):
     list_messages = []
     channel = ctx.message.channel 
-    calleduser = ctx.message.author
-
+    if arg == []:
+        calleduser = ctx.message.author
+        original = True
+    else:
+        calleduser = ctx.message.mentions[0] 
+        original = False
     
     outfile = f'{MESSAGES_DIRECTORY}{channel.id}/{calleduser.id}.out'
     if os.path.exists(outfile) == False:
@@ -45,7 +49,13 @@ async def babble(ctx, limit: int=10000):
             corpus += x
         sentence = markov.gen_sentence(markov.create_markov_model(corpus))
 
-        await channel.send(sentence)
+        if original:
+            await channel.send(sentence)
+        else:
+            if BotPingCredits:
+                await channel.send("\"" + sentence + "\" -<@!" + str(ctx.message.mentions[0].id) + ">")
+            else:
+                await channel.send("\"" + sentence + "\" -" + str(ctx.message.mentions[0].name))
 
 @client.command(pass_context=True, aliases=['archive'])
 async def relog(ctx, *limit:int):
@@ -68,15 +78,6 @@ async def relog(ctx, *limit:int):
             f.write(i + '\n')
     if DEBUG: print(channel.id)
     await channel.send("Relog complete!")
-
-@client.command()
-async def test(ctx, arg=''):
-    if arg:
-        await ctx.send(arg)
-    else:
-        await ctx.send('no u')
-    await ctx.message.delete()
-
 
 if __name__ == '__main__':
     client.run(TOKEN)
