@@ -2,6 +2,8 @@
 import os
 from discord.ext.commands import Bot
 import markov
+import discord
+import re
 
 from config import DEBUG, TOKEN, PREFIX as BOT_PREFIX, BotPingCredits
 
@@ -14,6 +16,7 @@ client.remove_command('help')
 async def babble(ctx, arg = [], limit: int=10000):
     list_messages = []
     channel = ctx.message.channel 
+    server = ctx.message.guild
     if arg == []:
         calleduser = ctx.message.author
         original = True
@@ -40,21 +43,31 @@ async def babble(ctx, arg = [], limit: int=10000):
                 f.write(msg + '\n')
         if DEBUG: print(channel.id)
         if DEBUG: print("hey i'm makin a file here")
-
+    
+    r = re.compile('<@!?(\d+)>')
     with open(outfile, 'r') as words:
         corpus = ''
         words = words.readlines()
         for x in words:
+            if r.match(x) is not None:
+                pinged_uid = int(re.sub(r'[^\d]', '', x))
+                pinged = server.get_member(int(pinged_uid))
+                if pinged.nick == None:
+                    x = "[" + pinged.name + "]"
+                else:
+                    x = "[" + pinged.nick + "]"
             corpus += x
         sentence = markov.gen_sentence(markov.create_markov_model(corpus))
-
         if original:
             await channel.send(sentence)
         else:
             if BotPingCredits:
                 await channel.send("\"" + sentence + "\" -<@!" + str(ctx.message.mentions[0].id) + ">")
             else:
-                await channel.send("\"" + sentence + "\" -" + str(ctx.message.mentions[0].name))
+                if ctx.message.mentions[0].nick == None:
+                    await channel.send("\"" + sentence + "\" -" + str(ctx.message.mentions[0].name))
+                else:
+                    await channel.send("\"" + sentence + "\" -" + str(ctx.message.mentions[0].nick))
 
 @client.command(pass_context=True, aliases=['archive'])
 async def relog(ctx, *limit:int):
@@ -90,11 +103,11 @@ __{BOT_PREFIX}relog__ – *alias: r* – Updates a user's message log bot-side. 
     arguments just like `{BOT_PREFIX}babble` ."""
     )
 
-# good for modifiying to test things
-@client.command(pass_context=True, aliases=['t'])
-async def test(ctx, *limit:int):
-    for x in ctx.message.author:
-        print(x)
+@client.command(pass_context=True)
+async def test(ctx, arg):
+    channel = ctx.message.channel 
+    server = ctx.message.guild
+    await channel.send(server.get_member(int(arg)))
 
 if __name__ == '__main__':
     client.run(TOKEN)
