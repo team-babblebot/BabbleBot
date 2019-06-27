@@ -3,13 +3,12 @@ import os
 from discord.ext.commands import Bot
 import markov
 
-DEBUG = False
-
-from config import TOKEN, PREFIX as BOT_PREFIX, BotPingCredits
+from config import DEBUG, TOKEN, PREFIX as BOT_PREFIX, BotPingCredits
 
 MESSAGES_DIRECTORY = "messages/"
 
 client = Bot(command_prefix=BOT_PREFIX)
+client.remove_command('help')
 
 @client.command(pass_context=True, aliases=['b'])
 async def babble(ctx, arg = [], limit: int=10000):
@@ -77,7 +76,25 @@ async def relog(ctx, *limit:int):
         for i in list_messages:
             f.write(i + '\n')
     if DEBUG: print(channel.id)
-    await channel.send("Relog complete!")
+@client.command(pass_context=True, aliases=['h'])
+async def help(ctx, limit: int=10000):
+    await ctx.message.channel.send(
+        f"""
+        :book:**Available commands**:book:
+__{BOT_PREFIX}help__ — *alias: h* – displays this text
+__{BOT_PREFIX}babble__ – *alias: b* – generate a sentence based 
+    on your message history. Optionally, add a user's nickname/username
+    in plaintext (not a mention) to have the bot instead use their message history.
+    Respective examples: `{BOT_PREFIX}babble`, `{BOT_PREFIX}b Xyzzy` .
+__{BOT_PREFIX}relog__ – *alias: r* – Updates a user's message log bot-side. Called and takes
+    arguments just like `{BOT_PREFIX}babble` ."""
+    )
+
+# good for modifiying to test things
+@client.command(pass_context=True, aliases=['t'])
+async def test(ctx, *limit:int):
+    for x in ctx.message.author:
+        print(x)
 
 if __name__ == '__main__':
     client.run(TOKEN)
