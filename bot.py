@@ -62,6 +62,8 @@ __{BOT_PREFIX}babble__ – *alias: b* – generate a sentence based
     on your message history. Optionally, add a user's nickname/username
     in plaintext (not a mention) to have the bot instead use their message history.
     Respective examples: `{BOT_PREFIX}babble`, `{BOT_PREFIX}b Xyzzy` .
+__{BOT_PREFIX}boomer__ – *alias: fb* – {BOT_PREFIX}babble but styled like a
+    comment from that one social media site.
 __{BOT_PREFIX}relog__ – *alias: r* – Updates a user's message log bot-side. Called and takes
     arguments just like `{BOT_PREFIX}babble` ."""
     )
