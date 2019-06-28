@@ -22,6 +22,7 @@ async def babble(ctx, arg = [], limit: int=10000):
 @client.command()
 async def boomer(ctx, arg=[], limit: int=10000):
     sentence = await gen_sentence(ctx, arg, limit)
+    sentence = boom.add_pre_suf(sentence)
     sentence = boom.add_elipses(sentence)
     await send_markov_message(ctx, arg, sentence)
 
@@ -106,8 +107,6 @@ async def gen_sentence(ctx, arg, limit):
 
         if not ALLOW_SENTENCE_MENTIONS:
             match = re.search(r'<@!?(\d+)>', sentence)
-            print(f'SENTENCE: {sentence}')
-            print(f'match: {match}')
             if match:
                 for user_id in match.groups():
                     user_id = int(user_id)
