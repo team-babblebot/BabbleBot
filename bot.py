@@ -22,8 +22,9 @@ async def babble(ctx, arg = [], limit: int=10000):
 @client.command()
 async def boomer(ctx, arg=[], limit: int=10000):
     sentence = await gen_sentence(ctx, arg, limit)
-    sentence = boom.boomer_caps(sentence)
+    sentence = boom.add_pre_suf(sentence)
     sentence = boom.add_elipses(sentence)
+    sentence = boom.boomer_caps(sentence)
     await send_markov_message(ctx, arg, sentence)
 
 @client.command(pass_context=True, aliases=['r'])
@@ -61,6 +62,8 @@ __{BOT_PREFIX}babble__ – *alias: b* – generate a sentence based
     on your message history. Optionally, add a user's nickname/username
     in plaintext (not a mention) to have the bot instead use their message history.
     Respective examples: `{BOT_PREFIX}babble`, `{BOT_PREFIX}b Xyzzy` .
+__{BOT_PREFIX}boomer__ – *alias: fb* – `{BOT_PREFIX}babble` but styled like a
+    comment from that one social media site.
 __{BOT_PREFIX}relog__ – *alias: r* – Updates a user's message log bot-side. Called and takes
     arguments just like `{BOT_PREFIX}babble` ."""
     )
@@ -107,8 +110,6 @@ async def gen_sentence(ctx, arg, limit):
 
         if not ALLOW_SENTENCE_MENTIONS:
             match = re.search(r'<@!?(\d+)>', sentence)
-            print(f'SENTENCE: {sentence}')
-            print(f'match: {match}')
             if match:
                 for user_id in match.groups():
                     user_id = int(user_id)
