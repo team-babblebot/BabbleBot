@@ -22,6 +22,7 @@ async def babble(ctx, arg = [], limit: int=10000):
 @client.command()
 async def boomer(ctx, arg=[], limit: int=10000):
     sentence = await gen_sentence(ctx, arg, limit)
+    sentence = boom.boomer_caps(sentence)
     sentence = boom.add_elipses(sentence)
     await send_markov_message(ctx, arg, sentence)
 
