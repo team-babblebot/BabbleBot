@@ -19,7 +19,7 @@ async def babble(ctx, arg = [], limit: int=10000):
     await send_markov_message(ctx, arg, sentence)
 
 
-@client.command()
+@client.command(aliases=['fb'])
 async def boomer(ctx, arg=[], limit: int=10000):
     sentence = await gen_sentence(ctx, arg, limit)
     sentence = boom.add_pre_suf(sentence)
