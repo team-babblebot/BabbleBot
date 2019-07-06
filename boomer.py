@@ -14,9 +14,9 @@ suffix = [
 '. Amen!',
 '. God bless america',
 '. God bless!',
-' haha'
-'. love ya!'
-'. love ya\'ll!'
+' haha',
+'. love ya!',
+'. love ya\'ll!',
 ]
 
 def add_pre_suf(sentence):
