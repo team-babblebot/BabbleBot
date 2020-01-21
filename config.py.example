@@ -1,5 +1,6 @@
 TOKEN = "BOT TOKEN GOES HERE"
 PREFIX='.'
+DEBUG=False
 # If sentence creation is called on another user, should the bot credit the user with a ping
 BOT_PING_CREDITS=False 
 ALLOW_SENTENCE_MENTIONS=False
